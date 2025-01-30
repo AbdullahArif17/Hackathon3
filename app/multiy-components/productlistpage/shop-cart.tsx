@@ -11,7 +11,7 @@ export interface Product {
   imageUrl: string;
   price: number;
   tags: string[];
-  dicountPercentage?: number;
+  discountPercentage?: number;
   isNew?: boolean; // New Badge is optional
 }
 
@@ -20,7 +20,7 @@ export default function JustForYou({
   description,
   imageUrl,
   price,
-  dicountPercentage,
+  discountPercentage,
   tags
 }: Product) {
   return (
@@ -48,7 +48,7 @@ export default function JustForYou({
             : description}
         </p>
         <div className="flex items-center gap-5">
-          {price && dicountPercentage ? (
+          {price && discountPercentage ? (
             <>
               {/* Original price with strikethrough */}
               <p className="text-lg text-gray-400 line-through">
@@ -57,7 +57,7 @@ export default function JustForYou({
 
               {/* Discounted price */}
               <p className="text-lg text-red-500">
-                ${((price * (100 - dicountPercentage)) / 100).toFixed(2)}
+                ${((price * (100 - discountPercentage)) / 100).toFixed(2)}
               </p>
             </>
           ) : (
