@@ -25,7 +25,7 @@ const getProduct = async () => {
       "imageUrl": productImage.asset->url,
        price,
       tags,
-       dicountPercentage,
+       discountPercentage,
       isNew
    }`;
 
@@ -123,7 +123,7 @@ async function Shop() {
                     description={product.description}
                     imageUrl={product.imageUrl}
                     price={product.price}
-                    dicountPercentage={product.dicountPercentage} tags={product.tags}
+                    discountPercentage={product.discountPercentage} tags={product.tags}
                     />
                 </div>
               </Link>

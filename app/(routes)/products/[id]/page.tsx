@@ -15,7 +15,13 @@ import Green_Header from "@/app/multiy-components/headers/green-header";
 import Header from "@/app/multiy-components/headers/header";
 import { useCart } from "../../cart/CartContext";
 
-const getProduct_fetching = async (id: string) => {
+interface ProductDetailProps {
+  params: {
+    id: string;
+  };
+}
+
+const getProduct_fetching = async (id: string): Promise<Product | null> => {
   const query = `*[_type == "product" && _id == $id][0] {  
     _id,
     title,
@@ -27,14 +33,16 @@ const getProduct_fetching = async (id: string) => {
     isNew
   }`;
   
-  return await client.fetch(query, { id });
+  const product = await client.fetch(query, { id });
+  return product || null;
 };
 
-export default function ProductDetail({ params }: { params: { id: string } }) {
+export default function ProductDetail({ params }: ProductDetailProps) {
   const [post, setPost] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
-  const id = params?.id;
+  const id = params.id;
 
   useEffect(() => {
     if (!id) return;
@@ -42,9 +50,14 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
     async function fetchData() {
       try {
         const data = await getProduct_fetching(id);
-        setPost(data);
+        if (!data) {
+          setError("Product not found.");
+        } else {
+          setPost(data);
+        }
       } catch (error) {
         console.error("Error fetching product data:", error);
+        setError("Failed to fetch product data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -54,6 +67,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
   }, [id]);
 
   if (loading) return <div className="h-[600px] text-center mt-20 font-bold text-3xl font-serif">Loading...</div>;
+  if (error) return <div className="h-[600px] text-center mt-20 font-bold text-3xl font-serif text-red-500">{error}</div>;
   if (!post) return <div>Product not found.</div>;
 
   const handleAddToCart = () => {
@@ -89,7 +103,7 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
 
         <div className="flex flex-col md:flex-row justify-center items-center md:p-9">
           <div className="md:w-1/2 w-full flex flex-col py-10 gap-3 items-center md:justify-start">
-            <Image src={post.imageUrl} alt={post.title} width={504} height={450} />
+            <Image src={post.imageUrl} alt={post.title} width={504} height={450} priority />
             <div className="flex gap-3 justify-start">
               <Image src={post.imageUrl} alt={post.title} width={100} height={75} />
               <Image src={post.imageUrl} alt={post.title} width={100} height={75} />
@@ -122,9 +136,10 @@ export default function ProductDetail({ params }: { params: { id: string } }) {
             <p className="border-b border-gray-500 pb-4">{post.description}</p>
 
             <div className="flex gap-5 py-4 items-center">
-              <Button onClick={handleAddToCart} className="bg-blue-500 py-6 px-9 text-md rounded-[8px] text-white">
-                Add Item
+              <Button onClick={handleAddToCart} className="bg-blue-500 py-6 px-9 text-md rounded-[8px] text-white hover:bg-blue-400">
+                <PiShoppingCartSimpleThin /> Add Item to Cart
               </Button>
+              <CiHeart />
             </div>
           </div>
         </div>
