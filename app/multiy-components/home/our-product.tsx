@@ -50,7 +50,7 @@ export default async function Our_Product() {
                       description={product.description}
                       imageUrl={product.imageUrl}
                       price={product.price}
-                      dicountPercentage={product.dicountPercentage}
+                      discountPercentage={product.discountPercentage}
                       tags={product.tags}
                     />
                   </div>
