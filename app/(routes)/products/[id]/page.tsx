@@ -1,27 +1,19 @@
 "use client";
 
-import { Product } from "@/app/multiy-components/productlistpage/shop-cart";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { client } from "@/sanity/lib/client";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import { CiHeart } from "react-icons/ci";
-import { FaRegStar } from "react-icons/fa";
-import { IoMdStar } from "react-icons/io";
-import { IoEye } from "react-icons/io5";
+import { useParams } from "next/navigation"; // Use useParams instead of destructuring directly
+import { client } from "@/sanity/lib/client";
+import { Product } from "@/app/multiy-components/productlistpage/shop-cart";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { PiShoppingCartSimpleThin } from "react-icons/pi";
 import Green_Header from "@/app/multiy-components/headers/green-header";
 import Header from "@/app/multiy-components/headers/header";
 import { useCart } from "../../cart/CartContext";
 
-interface ProductDetailProps {
-  params: {
-    id: string;
-  };
-}
-
-const getProduct_fetching = async (id: string): Promise<Product | null> => {
+const getProduct = async (id: string): Promise<Product | null> => {
+  if (!id) return null; // ✅ Ensure ID is valid before querying
+  
   const query = `*[_type == "product" && _id == $id][0] {  
     _id,
     title,
@@ -33,27 +25,36 @@ const getProduct_fetching = async (id: string): Promise<Product | null> => {
     isNew
   }`;
   
-  const product = await client.fetch(query, { id });
-  return product || null;
+  try {
+    return await client.fetch(query, { id });
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
+  }
 };
 
-export default function ProductDetail({ params }: ProductDetailProps) {
-  const [post, setPost] = useState<Product | null>(null);
+export default function ProductDetail() {
+  const params = useParams(); // ✅ Correct way to get dynamic route params in Next.js 13+
+  const id = params?.id as string; // ✅ Ensure id is treated as a string
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
-  const id = params.id;
 
   useEffect(() => {
     if (!id) return;
 
     async function fetchData() {
       try {
-        const data = await getProduct_fetching(id);
+        setLoading(true);
+        const data = await getProduct(id);
+
         if (!data) {
           setError("Product not found.");
+          setProduct(null);
         } else {
-          setPost(data);
+          setProduct(data);
+          setError(null);
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -62,20 +63,20 @@ export default function ProductDetail({ params }: ProductDetailProps) {
         setLoading(false);
       }
     }
-    
+
     fetchData();
   }, [id]);
 
   if (loading) return <div className="h-[600px] text-center mt-20 font-bold text-3xl font-serif">Loading...</div>;
   if (error) return <div className="h-[600px] text-center mt-20 font-bold text-3xl font-serif text-red-500">{error}</div>;
-  if (!post) return <div>Product not found.</div>;
+  if (!product) return <div>Product not found.</div>;
 
   const handleAddToCart = () => {
     addToCart({
-      id: post._id,
-      heading: post.title,
-      price: parseFloat(post.price?.toFixed(2) || "0"),
-      image: post.imageUrl,
+      id: product._id,
+      heading: product.title,
+      price: parseFloat(product.price?.toFixed(2) || "0"),
+      image: product.imageUrl,
       quantity: 1,
       selectedColor: "Blue",
       selectedSize: "M",
@@ -88,58 +89,34 @@ export default function ProductDetail({ params }: ProductDetailProps) {
       <Header />
       <div className="flex flex-col font-sans font-semibold bg-[#FAFAFA] gap-0">
         <div className="p-7">
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Shop</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <p>Product Details</p>
         </div>
 
         <div className="flex flex-col md:flex-row justify-center items-center md:p-9">
           <div className="md:w-1/2 w-full flex flex-col py-10 gap-3 items-center md:justify-start">
-            <Image src={post.imageUrl} alt={post.title} width={504} height={450} priority />
-            <div className="flex gap-3 justify-start">
-              <Image src={post.imageUrl} alt={post.title} width={100} height={75} />
-              <Image src={post.imageUrl} alt={post.title} width={100} height={75} />
-            </div>
+            <Image src={product.imageUrl} alt={product.title} width={504} height={450} priority />
           </div>
 
           <div className="md:w-1/2 w-full text-[#858585] space-y-4 flex flex-col justify-center font-sans font-semibold items-start md:justify-start px-9">
-            <h1 className="text-2xl text-black">{post.title}</h1>
-            <p className="flex text-yellow-500 gap-2 items-center">
-              <IoMdStar size={20} />
-              <IoMdStar size={20} />
-              <IoMdStar size={20} />
-              <IoMdStar size={20} />
-              <FaRegStar />
-              <span className="text-black">10 Reviews</span>
-            </p>
+            <h1 className="text-2xl text-black">{product.title}</h1>
             <div className="font-bold font-serif text-2xl text-black">
-              {post.price && post.discountPercentage ? (
+              {product.price && product.discountPercentage ? (
                 <>
-                  <p className="text-lg text-gray-400 line-through">${post.price.toFixed(2)}</p>
+                  <p className="text-lg text-gray-400 line-through">${product.price.toFixed(2)}</p>
                   <p className="text-lg text-red-500">
-                    ${((post.price * (100 - post.discountPercentage)) / 100).toFixed(2)}
+                    ${((product.price * (100 - product.discountPercentage)) / 100).toFixed(2)}
                   </p>
                 </>
               ) : (
-                <p className="text-lg text-green-800">${post.price?.toFixed(2)}</p>
+                <p className="text-lg text-green-800">${product.price?.toFixed(2)}</p>
               )}
             </div>
-            <p>Availability: <span>10</span></p>
-            <p className="border-b border-gray-500 pb-4">{post.description}</p>
+            <p className="border-b border-gray-500 pb-4">{product.description}</p>
 
             <div className="flex gap-5 py-4 items-center">
               <Button onClick={handleAddToCart} className="bg-blue-500 py-6 px-9 text-md rounded-[8px] text-white hover:bg-blue-400">
                 <PiShoppingCartSimpleThin /> Add Item to Cart
               </Button>
-              <CiHeart />
             </div>
           </div>
         </div>
