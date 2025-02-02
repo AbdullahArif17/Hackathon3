@@ -72,7 +72,7 @@ export default function SearchPage() {
   if (loading) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-4">Search Results for &quot;{query}&quot;</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="border p-4 rounded-lg shadow-sm">
@@ -90,7 +90,7 @@ export default function SearchPage() {
   if (error) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-4">Search Results for &quot;{query}&quot;</h1>
         <p className="text-red-500">{error}</p>
         <button
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -104,7 +104,7 @@ export default function SearchPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1>
+      <h1 className="text-2xl font-bold mb-4">Search Results for &quot;{query}&quot;</h1>
       {products.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {products.map((product) => (
@@ -126,7 +126,7 @@ export default function SearchPage() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-600">No products found for "{query}".</p>
+        <p className="text-gray-600">No products found for &quot;{query}&quot;.</p>
       )}
     </div>
   );
