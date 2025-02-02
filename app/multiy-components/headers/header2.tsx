@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import React from "react";
-import { SearchProvider } from "../search/SearchContext";
 import SearchBar from "../search/SearchBar";
 import {  IoPersonOutline, IoSearch } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
@@ -74,9 +73,7 @@ export default function Header_2() {
                     {/* Mobile Icons */}
                     <div className="flex md:hidden items-center gap-x-4">
                         {/* Search */}
-                        <SearchProvider>
               <SearchBar />
-            </SearchProvider>
                         {/* Cart */}
                         <Link href={'/cart'} className="flex items-center">
                             <FiShoppingCart size={24} className="text-gray-500" />

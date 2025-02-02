@@ -11,7 +11,6 @@ import React from "react";
 import { GoChevronDown } from "react-icons/go";
 import { IoPersonOutline, IoSearch } from "react-icons/io5";
 import { FiShoppingCart } from "react-icons/fi";
-import { SearchProvider } from "../search/SearchContext";
 import SearchBar from "../search/SearchBar";
 import { CiHeart } from "react-icons/ci";
 import { HiBars3BottomRight } from "react-icons/hi2";
@@ -78,9 +77,7 @@ export default function Header() {
             {/* Icons */}
             <ul className="flex items-center gap-x-4 text-[#23A6F0]">
               <li>
-                <SearchProvider>
                   <SearchBar />
-                </SearchProvider>
               </li>
               <li className="">
                 <Link href={"/cart"} className="flex items-center gap-x-1">
@@ -100,10 +97,8 @@ export default function Header() {
           {/* Mobile Icons */}
           <div className="flex md:hidden items-center gap-x-4">
             {/* Search */}
-            <SearchProvider>
               <SearchBar />
-            </SearchProvider>
-            {/* Cart */}
+          {/* Cart */}
             <Link href={"/cart"} className="flex items-center">
               <FiShoppingCart size={24} className="text-[#23A6F0]" />
             </Link>
