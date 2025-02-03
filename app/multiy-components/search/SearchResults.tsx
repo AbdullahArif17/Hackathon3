@@ -64,7 +64,7 @@ export default function SearchResults() {
   if (loading) {
     return (
       <div className="p-4 md:p-8">
-        <h1 className="text-2xl font-bold mb-6">Search Results for "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-6">Search Results for &#34;{query}&#34;</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, index) => (
             <Skeleton key={index} className="w-full h-64 rounded-lg" />
@@ -77,7 +77,7 @@ export default function SearchResults() {
   if (error) {
     return (
       <div className="p-4 md:p-8">
-        <h1 className="text-2xl font-bold mb-6">Search Results for "{query}"</h1>
+        <h1 className="text-2xl font-bold mb-6">Search Results for &#34;{query}&#34;</h1>
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -86,7 +86,7 @@ export default function SearchResults() {
   return (
 	<div className="w-full max-w-sm flex flex-col items-center justify-center bg-white overflow-hidden shadow-lg rounded-lg border border-gray-200">
 		<Header />
-      <h1 className="text-2xl font-bold mb-6">Search Results for "{query}"</h1>
+      <h1 className="text-2xl font-bold mb-6">Search Results for &#34;{query}&#34;</h1>
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.map((product) => (
@@ -110,7 +110,7 @@ export default function SearchResults() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-600">No products found for "{query}".</p>
+        <p className="text-gray-600">No products found for &#34;{query}&#34;.</p>
       )}
 	  <Footer />
     </div>
