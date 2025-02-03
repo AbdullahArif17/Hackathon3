@@ -5,22 +5,20 @@ import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { client } from "@/sanity/lib/client"; // Adjust the import path for your Sanity client
+import { client } from "@/sanity/lib/client";
 
-// Define the Product type
 interface Product {
   _id: string;
   title: string;
   imageUrl: string;
 }
 
-export default function SearchBar() {
+export default function SearchBar({ onClose }: { onClose?: () => void }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Debounce effect for API calls
   useEffect(() => {
     if (!searchTerm.trim()) {
       setSuggestions([]);
@@ -29,12 +27,11 @@ export default function SearchBar() {
 
     const delayDebounce = setTimeout(() => {
       fetchSuggestions(searchTerm);
-    }, 300); // Adjust debounce time if needed
+    }, 300);
 
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
 
-  // Fetch product suggestions
   const fetchSuggestions = async (query: string) => {
     setLoading(true);
     try {
@@ -43,10 +40,9 @@ export default function SearchBar() {
         title,
         "imageUrl": productImage.asset->url
       }`;
-
-      const params: Record<string, unknown> = { query: `${query.toLowerCase()}*` };
-      const data = await client.fetch<Product[]>(searchQuery, params);
-      setSuggestions(data); // ✅ Properly updating state
+      const params: Record<string, string> = { query: `${query}*` };
+      const results = await client.fetch<Product[]>(searchQuery, params);
+      setSuggestions(results);
     } catch (error) {
       console.error("Error fetching search suggestions:", error);
     } finally {
@@ -58,69 +54,53 @@ export default function SearchBar() {
     e.preventDefault();
     if (searchTerm.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
-      setSuggestions([]); // Clear suggestions after submitting search
+      onClose?.(); // Close search on submit
     }
   };
 
-  const clearSearch = () => {
-    setSearchTerm("");
-    setSuggestions([]);
-  };
-
   return (
-    <div className="relative w-full max-w-md">
-      <form onSubmit={handleSearch} className="flex items-center relative">
+    <div className="relative w-full max-w-lg">
+
+      <form onSubmit={handleSearch} className="flex items-center bg-white border border-gray-300 rounded-full shadow-sm px-4 py-2 focus-within:ring-2 focus-within:ring-blue-500">
+        <Search />
         <input
           type="text"
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+          className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 py-1"
         />
 
         {/* Clear Button */}
         {searchTerm && (
           <button
             type="button"
-            onClick={clearSearch}
-            className="absolute right-10 text-gray-500 hover:text-gray-700"
+            onClick={() => setSearchTerm("")}
+            className="text-gray-500 hover:text-gray-700"
             aria-label="Clear search"
           >
             <X size={18} />
           </button>
         )}
-
-        {/* Search Button */}
-        <button
-          type="submit"
-          className="absolute right-2 px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Search"
-        >
-          <Search size={18} />
-        </button>
       </form>
 
       {/* Suggestions Dropdown */}
       {suggestions.length > 0 && (
-        <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 overflow-hidden z-50">
+        <div className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-2 max-h-64 overflow-auto z-50">
           {loading ? (
-            <p className="p-2 text-gray-500">Loading...</p>
+            <p className="p-3 text-gray-500">Loading...</p>
           ) : (
             suggestions.map((product) => (
-              <Link
-                key={product._id}
-                href={`/products/${product._id}`}
-                onClick={() => setSearchTerm("")}
-              >
-                <div className="flex items-center p-2 hover:bg-gray-100 cursor-pointer">
+              <Link key={product._id} href={`/products/${product._id}`} onClick={onClose}>
+                <div className="flex items-center p-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
                   <Image
                     src={product.imageUrl}
                     alt={product.title}
                     width={40}
                     height={40}
-                    className="w-10 h-10 rounded object-cover"
+                    className="w-10 h-10 rounded-lg object-cover"
                   />
-                  <p className="ml-3 text-sm text-gray-800">{product.title}</p>
+                  <p className="ml-3 text-sm font-medium text-gray-800">{product.title}</p>
                 </div>
               </Link>
             ))

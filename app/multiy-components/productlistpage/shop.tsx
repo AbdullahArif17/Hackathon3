@@ -18,7 +18,7 @@ import { client } from "@/sanity/lib/client";
 import Link from "next/link";
 
 const getProduct = async () => {
-  const query = `*[_type == "product"][12...24] {
+  const query = `*[_type == "product"][0...24] {
      _id,
     title,
       description,
@@ -91,7 +91,7 @@ async function Shop() {
 
         {/* section three */}
         <div className="flex flex-col gap-5 md:flex-row  justify-between items-center py-10 md:py-5 lg:py-5 bg-white px-16 md:px-20 lg:px-32">
-          <div>Showing all 12 results</div>
+          <div>Showing all results</div>
           <div className="flex gap-5 items-center">
             <p>View:</p>
             <Image src={"/vector2.png"} alt="vector" width={40} height={40} />

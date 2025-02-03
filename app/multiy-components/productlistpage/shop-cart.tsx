@@ -75,7 +75,7 @@ export default function JustForYou({
           <p className="w-6 h-6 rounded-full bg-[#E77C40]"></p>
           <p className="w-6 h-6 rounded-full bg-[#252B42]"></p>
         </div>
-        <p className="from-neutral-700 underline">${tags}</p>
+        <p className="text-neutral-700 underline">${tags}</p>
       </div>
     </div>
   );

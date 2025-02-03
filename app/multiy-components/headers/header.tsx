@@ -22,7 +22,7 @@ export default function Header() {
         {/* Left Section: Logo and Navigation */}
         <div className="flex items-center gap-3 md:gap-2 lg:gap-12">
           {/* Logo */}
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl font-bold m-2 p-2">
             <Link href={"/"}>Bandage</Link>
           </h2>
 
