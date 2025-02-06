@@ -26,7 +26,7 @@ const CartPage = () => {
   // };
 
   return (
-    <div className="p-8">
+    <div className="">
       <Header />
       <h1 className="text-4xl font-bold my-6 text-center hover:underline text-myDarkOrange">
         Your Cart

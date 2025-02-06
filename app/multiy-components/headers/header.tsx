@@ -113,13 +113,13 @@ export default function Header() {
                   <SheetTitle></SheetTitle>
                   <SheetDescription>
                     <div className="flex flex-col justify-center items-center gap-y-6 text-2xl font-sans font-semibold text-[#39393a]">
-                      <ul className="flex flex-col items-center gap-8">
+                      <ul className="flex flex-col items-center gap-8 text-white">
                         <li>
                           <Link href={"/"} className="hover:text-blue-500">
                             Home
                           </Link>
                         </li>
-                        <li className="flex items-center gap-1">
+                        <li className="flex items-center">
                           <Link
                             href={"/products"}
                             className="hover:text-blue-500"
